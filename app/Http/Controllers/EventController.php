@@ -7,15 +7,21 @@ use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
+    // Afișează pagina cu evenimente
+    public function showPage()
+    {
+        return view('events'); // Pagina Blade creată la pasul anterior
+    }
+
     public function index()
     {
-        $events = Event::latest()->paginate(10);
+        $events = Event::where('event_date', '>=', now())->orderBy('event_date', 'asc')->get();
         return view('events.index', compact('events'));
     }
 
     public function create()
     {
-        return view('events.create');
+        return view('create');
     }
 
     public function store(Request $request)
@@ -29,28 +35,27 @@ class EventController extends Controller
             //'member_id' => 'required|exists:members,id',
         ]);
 
-        $validated['event_date'] = \Carbon\Carbon::parse($validated['event_date'])->format('Y-m-d H:i:s');
-        Event::create($validated);
-        dd('Event saved successfully!');
-        return redirect()->route('events.index')->with('success', 'Event created successfully!');
+        Event::create($request->all());
+
+        return redirect()->route('events.index')->with('success', 'Eveniment adăugat cu succes!');
     }
 
     public function edit(Event $event)
     {
-        return view('events.edit', compact('event'));
+        return view('edit', compact('event'));
     }
 
     public function update(Request $request, Event $event)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'event_date' => 'required|date',
-            //'member_id' => 'required|exists:members,id',
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'event_date' => 'required|date|after_or_equal:today',
         ]);
 
-        $event->update($validated);
-        return redirect()->route('events.index')->with('success', 'Event updated successfully!');
+        $event->update($request->all());
+
+        return redirect()->route('events.index')->with('success', 'Eveniment actualizat cu succes!');
     }
 
     public function destroy(Event $event)

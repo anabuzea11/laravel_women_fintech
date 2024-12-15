@@ -81,24 +81,40 @@
             </div>
         </div>
     </nav>
-<div class="container mt-4">
-    <h1 class="mb-4">Create Event</h1>
-    <form action="{{ route('events.store') }}" method="POST">
+    @extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1>Adaugă Eveniment</h1>
+
+    <form method="POST" action="{{ route('events.store') }}">
         @csrf
-        <div class="mb-3">
-            <label for="name" class="form-label">Event Name</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}">
+        <div class="form-group">
+            <label for="title">Titlu</label>
+            <input type="text" name="title" id="title" class="form-control" value="{{ old('title') }}" required>
+            @error('title')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
         </div>
-        <div class="mb-3">
-            <label for="event_date" class="form-label">Event Date</label>
-            <input type="datetime-local" class="form-control" id="event_date" name="event_date" value="{{ old('event_date') }}">
+
+        <div class="form-group">
+            <label for="description">Descriere</label>
+            <textarea name="description" id="description" class="form-control" required>{{ old('description') }}</textarea>
+            @error('description')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
         </div>
-        <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
-            <textarea class="form-control" id="description" name="description" rows="3">{{ old('description') }}</textarea>
+
+        <div class="form-group">
+            <label for="event_date">Data evenimentului</label>
+            <input type="date" name="event_date" id="event_date" class="form-control" value="{{ old('event_date') }}" required>
+            @error('event_date')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
         </div>
-        <button type="submit" class="btn btn-primary">Create Event</button>
+
+        <button type="submit" class="btn btn-primary mt-3">Adaugă Eveniment</button>
     </form>
 </div>
-</body>
-</html>
+@endsection
+

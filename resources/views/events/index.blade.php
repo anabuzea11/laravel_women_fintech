@@ -72,43 +72,36 @@
             </div>
         </div>
     </nav>
-<div class="container mt-4">
-    <h1 class="mb-4">Events</h1>
-    <a href="{{ route('events.create') }}" class="btn btn-primary mb-3">Add New Event</a>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($events as $event)
-                <tr>
-                    <td>{{ $event->name }}</td>
-                    <td>{{ $event->event_date->format('d M Y, H:i') }}</td>
-                    <td>{{ Str::limit($event->description, 50) }}</td>
-                    <td>
-                        <a href="{{ route('events.edit', $event->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                        <form action="{{ route('events.destroy', $event->id) }}" method="POST" style="display: inline-block;">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?');">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="4" class="text-center">No events found.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
-    <div class="d-flex justify-content-center">
-        {{ $events->links() }}
-    </div>
 </div>
-</body>
-</html>
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1>Evenimente viitoare</h1>
+
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <a href="{{ route('events.create') }}" class="btn btn-primary mb-3">Adaugă Eveniment</a>
+
+    @if($events->isEmpty())
+        <p>Nu există evenimente viitoare.</p>
+    @else
+        <ul class="list-group">
+            @foreach($events as $event)
+                <li class="list-group-item">
+                    <strong>{{ $event->title }}</strong> - {{ $event->event_date }}
+                    <br>{{ $event->description }}
+                    <div class="mt-2">
+                        <a href="{{ route('events.edit', $event) }}" class="btn btn-sm btn-warning">Editează</a>
+                    </div>
+                </li>
+            @endforeach
+        </ul>
+    @endif
+</div>
+@endsection
+
